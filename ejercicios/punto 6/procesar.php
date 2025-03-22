@@ -1,17 +1,19 @@
 <?php
 include 'Arbol.php';
 
-session_start();
-
-if (!isset($_SESSION['arbol'])) {
-    $_SESSION['arbol'] = new Arbol();
-}
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $valor = intval($_POST['valor']);
-    $_SESSION['arbol']->insertar($valor);
-}
+    $preorden = isset($_POST['preorden']) ? explode(',', str_replace(' ', '', $_POST['preorden'])) : [];
+    $inorden = isset($_POST['inorden']) ? explode(',', str_replace(' ', '', $_POST['inorden'])) : [];
 
-header("Location: index.php");
-exit();
+    if (count($preorden) > 0 && count($inorden) > 0) {
+        $arbol = new Arbol();
+        $arbol->raiz = $arbol->construirDesdePreInorden($preorden, $inorden);
+        session_start();
+        $_SESSION['arbol'] = serialize($arbol);
+        header("Location: mostrar_arbol.php");
+        exit();
+    } else {
+        echo "Por favor ingrese al menos dos recorridos.";
+    }
+}
 ?>

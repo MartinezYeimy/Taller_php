@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Construcción de Árbol Binario</title>
+</head>
+<body>
+    <h2>Ingrese los recorridos del árbol</h2>
+    <form action="procesar.php" method="post">
+        <label for="preorden">Recorrido Preorden (separado por comas):</label><br>
+        <input type="text" id="preorden" name="preorden" required><br><br>
+
+        <label for="inorden">Recorrido Inorden (separado por comas):</label><br>
+        <input type="text" id="inorden" name="inorden" required><br><br>
+
+        <button type="submit">Construir Árbol</button>
+    </form>
+    <br>
+    <a href="mostrar_arbol.php"><button>Mostrar Árbol</button></a>
+</body>
+</html>

@@ -8,35 +8,30 @@ class Arbol {
         $this->raiz = null;
     }
 
-    public function insertar($valor) {
-        $this->raiz = $this->insertarRecursivo($this->raiz, $valor);
+    public function construirDesdePreInorden($preorden, $inorden) {
+        return $this->construirArbol($preorden, $inorden);
     }
 
-    private function insertarRecursivo($nodo, $valor) {
-        if ($nodo === null) {
-            return new Nodo($valor);
+    private function construirArbol($preorden, $inorden) {
+        if (empty($preorden) || empty($inorden)) {
+            return null;
         }
 
-        if ($valor < $nodo->valor) {
-            $nodo->izquierdo = $this->insertarRecursivo($nodo->izquierdo, $valor);
-        } elseif ($valor > $nodo->valor) {
-            $nodo->derecho = $this->insertarRecursivo($nodo->derecho, $valor);
-        }
+        $raizValor = array_shift($preorden);
+        $raiz = new Nodo($raizValor);
 
-        return $nodo;
-    }
+        $posicion = array_search($raizValor, $inorden);
 
-    public function mostrarArbol($nodo) {
-        if ($nodo === null) {
-            return "";
-        }
+        $inordenIzq = array_slice($inorden, 0, $posicion);
+        $inordenDer = array_slice($inorden, $posicion + 1);
 
-        $resultado = "(" . $nodo->valor;
-        $resultado .= " " . $this->mostrarArbol($nodo->izquierdo);
-        $resultado .= " " . $this->mostrarArbol($nodo->derecho);
-        $resultado .= ")";
+        $preordenIzq = array_slice($preorden, 0, count($inordenIzq));
+        $preordenDer = array_slice($preorden, count($inordenIzq));
 
-        return $resultado;
+        $raiz->izquierdo = $this->construirArbol($preordenIzq, $inordenIzq);
+        $raiz->derecho = $this->construirArbol($preordenDer, $inordenDer);
+
+        return $raiz;
     }
 }
 ?>
