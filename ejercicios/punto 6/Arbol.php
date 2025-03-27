@@ -12,7 +12,7 @@ class Arbol {
         return $this->construirArbol($preorden, $inorden);
     }
 
-    private function construirArbol($preorden, $inorden) {
+    private function construirArbol(&$preorden, $inorden) {
         if (empty($preorden) || empty($inorden)) {
             return null;
         }
@@ -25,11 +25,8 @@ class Arbol {
         $inordenIzq = array_slice($inorden, 0, $posicion);
         $inordenDer = array_slice($inorden, $posicion + 1);
 
-        $preordenIzq = array_slice($preorden, 0, count($inordenIzq));
-        $preordenDer = array_slice($preorden, count($inordenIzq));
-
-        $raiz->izquierdo = $this->construirArbol($preordenIzq, $inordenIzq);
-        $raiz->derecho = $this->construirArbol($preordenDer, $inordenDer);
+        $raiz->izquierdo = $this->construirArbol($preorden, $inordenIzq);
+        $raiz->derecho = $this->construirArbol($preorden, $inordenDer);
 
         return $raiz;
     }

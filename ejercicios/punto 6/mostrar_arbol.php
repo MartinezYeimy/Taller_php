@@ -1,104 +1,143 @@
 <?php
 session_start();
-require_once 'Arbol.php';
+include 'Arbol.php'; 
 
 if (!isset($_SESSION['arbol'])) {
-    echo "No hay árbol para mostrar.";
+    echo "<h3>No hay árbol para mostrar.</h3>";
+    echo "<a href='index.html'><button>Volver</button></a>";
     exit();
 }
 
 $arbol = unserialize($_SESSION['arbol']);
 
-function mostrarRecorrido($nodo) {
-    if ($nodo == null) {
-        return;
-    }
-    
-    echo "<li>";
-    echo "<div class='nodo'>" . $nodo->valor . "</div>";
-    
+function generarEstructuraArbol($nodo) {
+    if ($nodo == null) return "";
+
+    $html = "<li><div class='nodo'>{$nodo->valor}</div>";
     if ($nodo->izquierdo || $nodo->derecho) {
-        echo "<ul>";
+        $html .= "<ul class='hijos'>";
         if ($nodo->izquierdo) {
-            mostrarRecorrido($nodo->izquierdo);
+            $html .= generarEstructuraArbol($nodo->izquierdo);
+        } else {
+            $html .= "<li class='espacio-vacio'></li>"; 
         }
         if ($nodo->derecho) {
-            mostrarRecorrido($nodo->derecho);
+            $html .= generarEstructuraArbol($nodo->derecho);
+        } else {
+            $html .= "<li class='espacio-vacio'></li>"; 
         }
-        echo "</ul>";
+        $html .= "</ul>";
     }
-    
-    echo "</li>";
+    $html .= "</li>";
+
+    return $html;
 }
 
-echo "<h2>Árbol Binario</h2>";
-echo "<div class='contenedor-arbol'>";
-echo "<ul class='arbol'>";
-mostrarRecorrido($arbol->raiz);
-echo "</ul>";
-echo "</div>";
+$estructuraArbol = "<ul class='arbol'>" . generarEstructuraArbol($arbol->raiz) . "</ul>";
 ?>
-<style>
-    .contenedor-arbol {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-    }
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Árbol Binario</title>
+    <style>
+       .arbol {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0;
+}
 
-    .arbol {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 0;
-        list-style-type: none;
-    }
+ul {
+    list-style-type: none;
+    padding: 0;
+    position: relative;
+    text-align: center;
+}
 
-    .arbol ul {
-        display: flex;
-        justify-content: center;
-        padding: 0;
-        list-style-type: none;
-    }
+ul.hijos {
+    display: flex;
+    justify-content: center;
+    padding-top: 20px;
+    position: relative;
+}
 
-    .arbol li {
-        position: relative;
-        text-align: center;
-        list-style-type: none;
-        padding: 20px;
-    }
+.nodo {
+    display: inline-block;
+    padding: 10px;
+    border-radius: 10px;
+    background: lightblue;
+    border: 1px solid black;
+    margin: 5px;
+    position: relative;
+}
 
-    .nodo {
-        display: inline-block;
-        padding: 10px;
-        border-radius: 10px;
-        border: 2px solid black;
-        background-color: lightblue;
-        font-weight: bold;
-        min-width: 30px;
-    }
 
-    .arbol li::before, .arbol li::after {
-        content: "";
-        position: absolute;
-        top: -2px;
-        width: 50%;
-        height: 20px;
-        border-top: 2px solid black;
-    }
+.hijos::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 1%;
+    width: 0;
+    height: 30px;
+    border-left: 0px solid black;
+}
 
-    .arbol li::before {
-        right: 50%;
-        border-right: 2px solid black;
-    }
 
-    .arbol li::after {
-        left: 50%;
-        border-left: 2px solid black;
-    }
+.hijos li::before, .hijos li::after {
+    content: "";
+    position: absolute;
+    top: 1px;
+    width: 70%;
+    height: 35px;
+    border-top: 1px solid black;
+}
 
-    .arbol li:first-child::before,
-    .arbol li:last-child::after {
-        display: none;
-    }
-</style>
+.hijos li::before {
+    left: 0;
+    border-right: 1px solid black;
+}
+
+.hijos li::after {
+    right: 0;
+    border-left: 1px solid black;
+}
+
+.hijos li::after, .hijos li::before {
+    top: -10px;
+}
+
+.hijos li:first-child::before {
+    display: none;
+}
+
+.hijos li:last-child::after {
+    display: none;
+}
+
+
+.espacio-vacio {
+    visibility: hidden;
+    width: 50px; 
+}
+
+button {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+    </style>
+</head>
+<body>
+    <h2>Árbol Binario</h2>
+    <div><?php echo $estructuraArbol; ?></div>
+    <a href="index.html"><button>Volver</button></a>
+</body>
+</html>
