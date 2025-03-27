@@ -3,15 +3,9 @@ require_once "Conjunto.php";
 require_once "ConjuntoOperaciones.php";
 
 function limpiarEntrada(string $input): array {
-    // Separar por comas y limpiar espacios
     $elementos = array_map('trim', explode(',', $input));
-
-    // Filtrar solo números y letras (sin caracteres especiales)
-    $elementosValidos = array_filter($elementos, function($item) {
-        return preg_match('/^[a-zA-Z0-9]+$/', $item);
-    });
-
-    return array_values($elementosValidos); // Reindexar array
+    $elementosValidos = array_filter($elementos, fn($item) => preg_match('/^[a-zA-Z0-9]+$/', $item));
+    return array_values($elementosValidos);
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -28,11 +22,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         'diferencia_ba' => implode(', ', ConjuntoOperaciones::diferencia($conjuntoB, $conjuntoA)->getElementos())
     ];
 
-    
-    file_put_contents("resultados.json", json_encode($resultados));
+    $contenido = "<h2>Resultados de las Operaciones</h2>";
+    $contenido .= "<p><strong>Unión (A ∪ B):</strong> { " . $resultados['union'] . " }</p>";
+    $contenido .= "<p><strong>Intersección (A ∩ B):</strong> { " . $resultados['interseccion'] . " }</p>";
+    $contenido .= "<p><strong>Diferencia (A - B):</strong> { " . $resultados['diferencia_ab'] . " }</p>";
+    $contenido .= "<p><strong>Diferencia (B - A):</strong> { " . $resultados['diferencia_ba'] . " }</p>";
+    $contenido .= "<br><a href='index.html'><button>Volver</button></a>";
 
-    
-    header("Location: resultado.html");
+    file_put_contents("resultado.html", $contenido);
+    header("Location: resultado.php");
     exit();
 }
 ?>
